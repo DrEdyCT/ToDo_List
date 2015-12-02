@@ -9,11 +9,11 @@ from django.contrib.auth.models import User
 import datetime
 
 def home_page(request):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     return render(request, 'home_page.html', locals())
 
 def registration(request):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -32,7 +32,7 @@ def registration(request):
     return render(request, 'registration_page.html', locals())
 
 def todo_list(request):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     form = MainForm(request.POST)
     if form.is_valid():
         rimind = form.cleaned_data['text']
@@ -60,7 +60,7 @@ def action(request, action_type, id):
     return redirect('/my_todo_list')
 
 def edit_text(request, offset):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     data = Reminder.objects.filter(id=offset)[0]
     date = datetime.datetime.strptime(data.date, "%Y-%m-%d")
     if request.method == 'POST':
@@ -81,7 +81,7 @@ def edit_text(request, offset):
     return render(request, 'redact_page.html', locals())
 
 def signin(request):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -113,18 +113,16 @@ def login_status(request):
     go_back_link = request.META.get('HTTP_REFERER', '')
     if request.user.is_authenticated():
         user_authenticated = True
-        user_action = "/signout/"
     else:
         user_authenticated = False
-        user_action = "/signin/"
-    return [user_authenticated, user_action, go_back_link]
+    return [user_authenticated, go_back_link]
 
 def signout(request):
     logout(request)
     return home_page(request)
 
 def go_to_todo_list(request):
-    user_authenticated, user_action, go_back_link = login_status(request)
+    user_authenticated, go_back_link = login_status(request)
     if user_authenticated:
         return redirect('/my_todo_list')
     else:
