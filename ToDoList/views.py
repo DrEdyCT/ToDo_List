@@ -47,30 +47,22 @@ def todo_list(request):
     finished_reminders = reminders.filter(status=3)
     return render(request, 'to_do_list_page.html', locals())
 
-def delete_action(request, offset):
-    text = Reminder.objects.filter(id=offset)
-    text.delete()
-    return redirect('/my_todo_list')
-
-def done_action(request, offset):
-    text = Reminder.objects.filter(id=offset)
-    text.update(status=3)
-    return redirect('/my_todo_list')
-
-def undone_action(request, offset):
-    text = Reminder.objects.filter(id=offset)
-    text.update(status=1)
-    return redirect('/my_todo_list')
-
-def in_progress_action(request, offset):
-    text = Reminder.objects.filter(id=offset)
-    text.update(status=2)
+def action(request, action_type, id):
+    text = Reminder.objects.filter(id=id)
+    if action_type == "delete":
+        text.delete()
+    elif action_type == "undone":
+        text.update(status=1)
+    elif action_type == "in_progress":
+        text.update(status=2)
+    elif action_type == "done":
+        text.update(status=3)
     return redirect('/my_todo_list')
 
 def edit_text(request, offset):
     user_authenticated, user_action, go_back_link = login_status(request)
     data = Reminder.objects.filter(id=offset)[0]
-    date = datetime.datetime.strptime(data.date, "%d.%m.%Y")
+    date = datetime.datetime.strptime(data.date, "%Y-%m-%d")
     if request.method == 'POST':
         form = EditReminderTextForm(request.POST)
         if form.is_valid():

@@ -11,8 +11,8 @@ urlpatterns = [
     url(r'^signout/$', signout),
     url(r'^to_do_list/$', go_to_todo_list),
 
-    url(r'^delete/(\d+)/$', delete_action),
-    url(r'^done/(\d+)/$', done_action),
-    url(r'^undone/(\d+)/$', undone_action),
-    url(r'^in_progress/(\d+)/$', in_progress_action),
+    url(r'^delete/(?P<id>\d+)/$', action, {'action_type': 'delete'}),
+    url(r'^done/(?P<id>\d+)/$', action, {'action_type': 'done'}),
+    url(r'^undone/(?P<id>\d+)/$', action, {'action_type': 'undone'}),
+    url(r'^in_progress/(?P<id>\d+)/$', action, {'action_type': 'in_progress'}),
 ]
