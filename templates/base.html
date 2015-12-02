@@ -1,0 +1,54 @@
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    {% load staticfiles %}
+    <link href="{% static 'css/bootstrap.css' %}"  rel="stylesheet">
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Test project</a>
+            </div>
+            <div class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right" role="form">
+                {% if user_authenticated %}
+                    <a type="submit" class="btn btn-success" href="/signout/">Sign out</a>
+                {% else %}
+                    <a type="submit" class="btn btn-success" href="/signin/">Sign in</a>
+                    <a class="btn btn-success" href="/registration/">Register</a>
+                {% endif %}
+            </form>
+        </div>
+            {% block head_bar %}{% endblock %}
+        </div>
+    </div>
+
+    <div style="height: 20px"></div>
+
+    <div class="jumbotron" style="border-bottom: 2px solid black">
+        <div class="container" style="height:auto;">
+            {% block head %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+        <div style="height: 48px"></div>
+    </div>
+
+    <div style="height: 48px"></div>
+    <form class="navbar-fixed-bottom" style="border-top: 2px solid black; background: lightgrey; height: 48px">
+        <div class="navbar-form">
+            {% block footer %}
+                <a class="btn btn-primary btn-sm" style="vertical-align: middle" href={{ go_back_link }}>Go back</a>
+                <a class="btn btn-primary btn-sm" style="vertical-align: middle" href="/">Go to main</a>
+            {% endblock %}
+        </div>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+  </body>
+</html>
