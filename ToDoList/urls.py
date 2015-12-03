@@ -2,12 +2,13 @@ from django.conf.urls import url
 from views import *
 
 urlpatterns = [
-    url(r'^$', home_page),
-    url(r'^my_todo_list/$', todo_list),
-    url(r'^redact/(\d+)/$', edit_text),
+    url(r'^$', empty_page, {'template':'home_page.html'}),
+    url(r'^my_todo_list/$', todo_list, {'template':'to_do_list_page.html'}),
+    url(r'^redact/(\d+)/$', edit_text, {'template':'redact_page.html'}),
 
-    url(r'^registration/$', registration),
-    url(r'^signin/$', signin),
+    url(r'^registration_ty/$', empty_page, {'template':'congratulate.html'}),
+    url(r'^registration/$', registration, {'template':'registration_page.html'}),
+    url(r'^signin/$', signin, {'template':'signin_page.html'}),
     url(r'^signout/$', signout),
     url(r'^to_do_list/$', go_to_todo_list),
 

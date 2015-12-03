@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from forms import *
 from users_data.models import *
 from django.contrib.auth.models import User
 import datetime
 
-def home_page(request):
+def empty_page(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
-    return render(request, 'home_page.html', locals())
+    return render(request, kwargs['template'], locals())
 
-def registration(request):
+def registration(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -23,15 +24,15 @@ def registration(request):
             email = form.cleaned_data['email']
             if pass1 != pass2:
                 error = 'Passwords do not match'
-                return render(request, 'registration_page.html', locals())
+                return render(request, kwargs['template'], locals())
             new_user = User.objects.create_user(username, email, pass1)
             new_user.save()
-            return render(request, 'congratulate.html', locals())
+            return HttpResponseRedirect('/registration_ty/')
     else:
         form = RegistrationForm()
-    return render(request, 'registration_page.html', locals())
+    return render(request, kwargs['template'], locals())
 
-def todo_list(request):
+def todo_list(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
     form = MainForm(request.POST)
     if form.is_valid():
@@ -45,7 +46,7 @@ def todo_list(request):
     new_reminders = reminders.filter(status=1)
     in_progress_reminders = reminders.filter(status=2)
     finished_reminders = reminders.filter(status=3)
-    return render(request, 'to_do_list_page.html', locals())
+    return render(request, kwargs['template'], locals())
 
 def action(request, action_type, id):
     text = Reminder.objects.filter(id=id)
@@ -59,16 +60,16 @@ def action(request, action_type, id):
         text.update(status=3)
     return redirect('/my_todo_list')
 
-def edit_text(request, offset):
+def edit_text(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
-    data = Reminder.objects.filter(id=offset)[0]
+    data = Reminder.objects.filter(id=args[0])[0]
     date = datetime.datetime.strptime(data.date, "%Y-%m-%d")
     if request.method == 'POST':
         form = EditReminderTextForm(request.POST)
         if form.is_valid():
             new_text = form.cleaned_data['text']
             new_date = form.cleaned_data['date']
-            old_reminder = Reminder.objects.filter(id=offset)
+            old_reminder = Reminder.objects.filter(id=args[0])
             old_reminder.update(text=new_text, date=new_date)
             return redirect('/my_todo_list')
     else:
@@ -78,9 +79,9 @@ def edit_text(request, offset):
                 'date': date.strftime("%Y-%m-%d"),
             }
         )
-    return render(request, 'redact_page.html', locals())
+    return render(request, kwargs['template'], locals())
 
-def signin(request):
+def signin(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -104,10 +105,10 @@ def signin(request):
                         form = MainForm()
                         login(request, user)
                         return redirect('/my_todo_list')
-            return render(request, 'signin_page.html', locals())
+            return render(request, kwargs['template'], locals())
     else:
         form = LoginForm()
-    return render(request, 'signin_page.html', locals())
+    return render(request, kwargs['template'], locals())
 
 def login_status(request):
     go_back_link = request.META.get('HTTP_REFERER', '')
@@ -119,11 +120,11 @@ def login_status(request):
 
 def signout(request):
     logout(request)
-    return home_page(request)
+    return redirect('/')
 
 def go_to_todo_list(request):
     user_authenticated, go_back_link = login_status(request)
     if user_authenticated:
         return redirect('/my_todo_list')
     else:
-        return signin(request)
+        return redirect('/signin')
