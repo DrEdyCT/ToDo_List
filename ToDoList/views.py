@@ -34,19 +34,22 @@ def registration(request, *args, **kwargs):
 
 def todo_list(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
-    form = MainForm(request.POST)
-    if form.is_valid():
-        rimind = form.cleaned_data['text']
-        my_date = form.cleaned_data['date']
-        if rimind:
-            id = request.user.id
-            text = Reminder.objects.all()
-            text.create(text = rimind, user_id = id, date = my_date)
-    reminders = Reminder.objects.filter(user_id=request.user.id).order_by('date')
-    new_reminders = reminders.filter(status=1)
-    in_progress_reminders = reminders.filter(status=2)
-    finished_reminders = reminders.filter(status=3)
-    return render(request, kwargs['template'], locals())
+    if user_authenticated:
+        form = MainForm(request.POST)
+        if form.is_valid():
+            rimind = form.cleaned_data['text']
+            my_date = form.cleaned_data['date']
+            if rimind:
+                id = request.user.id
+                text = Reminder.objects.all()
+                text.create(text = rimind, user_id = id, date = my_date)
+        reminders = Reminder.objects.filter(user_id=request.user.id).order_by('date')
+        new_reminders = reminders.filter(status=1)
+        in_progress_reminders = reminders.filter(status=2)
+        finished_reminders = reminders.filter(status=3)
+        return render(request, kwargs['template'], locals())
+    else:
+        return redirect('/signin')
 
 def action(request, action_type, id):
     text = Reminder.objects.filter(id=id)
@@ -104,7 +107,7 @@ def signin(request, *args, **kwargs):
                     else:
                         form = MainForm()
                         login(request, user)
-                        return redirect('/my_todo_list')
+                        return redirect('/')
             return render(request, kwargs['template'], locals())
     else:
         form = LoginForm()
@@ -121,10 +124,3 @@ def login_status(request):
 def signout(request):
     logout(request)
     return redirect('/')
-
-def go_to_todo_list(request):
-    user_authenticated, go_back_link = login_status(request)
-    if user_authenticated:
-        return redirect('/my_todo_list')
-    else:
-        return redirect('/signin')

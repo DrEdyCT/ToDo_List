@@ -10,7 +10,6 @@ urlpatterns = [
     url(r'^registration/$', registration, {'template':'registration_page.html'}),
     url(r'^signin/$', signin, {'template':'signin_page.html'}),
     url(r'^signout/$', signout),
-    url(r'^to_do_list/$', go_to_todo_list),
 
     url(r'^delete/(?P<id>\d+)/$', action, {'action_type': 'delete'}),
     url(r'^done/(?P<id>\d+)/$', action, {'action_type': 'done'}),
