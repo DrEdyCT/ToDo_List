@@ -10,11 +10,11 @@ from django.contrib.auth.models import User
 import datetime
 
 def empty_page(request, *args, **kwargs):
-    user_authenticated, go_back_link = login_status(request)
+    kwargs.update(login_status(request))
     return render(request, kwargs['template'], locals())
 
 def registration(request, *args, **kwargs):
-    user_authenticated, go_back_link = login_status(request)
+    kwargs.update(login_status(request))
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -33,8 +33,8 @@ def registration(request, *args, **kwargs):
     return render(request, kwargs['template'], locals())
 
 def todo_list(request, *args, **kwargs):
-    user_authenticated, go_back_link = login_status(request)
-    if user_authenticated:
+    kwargs.update(login_status(request))
+    if kwargs['user_authenticated']:
         form = MainForm(request.POST)
         if form.is_valid():
             rimind = form.cleaned_data['text']
@@ -64,7 +64,7 @@ def action(request, action_type, id):
     return redirect('/my_todo_list')
 
 def edit_text(request, *args, **kwargs):
-    user_authenticated, go_back_link = login_status(request)
+    kwargs.update(login_status(request))
     data = Reminder.objects.filter(id=kwargs['id'])[0]
     date = datetime.datetime.strptime(data.date, "%Y-%m-%d")
     if request.method == 'POST':
@@ -85,7 +85,7 @@ def edit_text(request, *args, **kwargs):
     return render(request, kwargs['template'], locals())
 
 def signin(request, *args, **kwargs):
-    user_authenticated, go_back_link = login_status(request)
+    kwargs.update(login_status(request))
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -114,12 +114,17 @@ def signin(request, *args, **kwargs):
     return render(request, kwargs['template'], locals())
 
 def login_status(request):
-    go_back_link = request.META.get('HTTP_REFERER', '')
     if request.user.is_authenticated():
         user_authenticated = True
+        user_name = request.user.username
     else:
         user_authenticated = False
-    return [user_authenticated, go_back_link]
+        user_name = False
+    return {
+        "user_authenticated":user_authenticated,
+        "user_name":user_name,
+        "go_back_link":request.META.get('HTTP_REFERER', ''),
+    }
 
 def signout(request):
     logout(request)

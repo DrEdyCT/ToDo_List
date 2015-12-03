@@ -13,7 +13,8 @@
             </div>
             <div class="navbar-collapse collapse">
             <form class="navbar-form navbar-right" role="form">
-                {% if user_authenticated %}
+                {% if kwargs.user_authenticated %}
+                    <p class="form-control-static" style="color: darkgrey; margin-right: 20px">Welkome, {{ kwargs.user_name }}</p>
                     <a type="submit" class="btn btn-success" href="/signout/">Sign out</a>
                 {% else %}
                     <a type="submit" class="btn btn-success" href="/signin/">Sign in</a>
@@ -42,7 +43,7 @@
     <form class="navbar-fixed-bottom" style="border-top: 2px solid black; background: lightgrey; height: 48px">
         <div class="navbar-form">
             {% block footer %}
-                <a class="btn btn-primary btn-sm" style="vertical-align: middle" href={{ go_back_link }}>Go back</a>
+                <a class="btn btn-primary btn-sm" style="vertical-align: middle" href={{ kwargs.go_back_link }}>Go back</a>
                 <a class="btn btn-primary btn-sm" style="vertical-align: middle" href="/">Go to main</a>
             {% endblock %}
         </div>
