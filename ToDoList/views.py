@@ -90,8 +90,8 @@ def signin(request):
             if '@' not in name:
                 user = authenticate(username = name, password = password)
             else:
-                a = User.objects.filter(email=name)[0].username
-                user = authenticate(username = a, password = password)
+                username = User.objects.filter(email=name)[0].username
+                user = authenticate(username = username, password = password)
             if len(User.objects.all()) == 0 or user is None:
                 error = 'E-mail or password is invalid'
             else:
