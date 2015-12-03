@@ -65,14 +65,14 @@ def action(request, action_type, id):
 
 def edit_text(request, *args, **kwargs):
     user_authenticated, go_back_link = login_status(request)
-    data = Reminder.objects.filter(id=args[0])[0]
+    data = Reminder.objects.filter(id=kwargs['id'])[0]
     date = datetime.datetime.strptime(data.date, "%Y-%m-%d")
     if request.method == 'POST':
         form = EditReminderTextForm(request.POST)
         if form.is_valid():
             new_text = form.cleaned_data['text']
             new_date = form.cleaned_data['date']
-            old_reminder = Reminder.objects.filter(id=args[0])
+            old_reminder = Reminder.objects.filter(id=kwargs['id'])
             old_reminder.update(text=new_text, date=new_date)
             return redirect('/my_todo_list')
     else:

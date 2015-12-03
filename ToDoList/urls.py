@@ -4,7 +4,7 @@ from views import *
 urlpatterns = [
     url(r'^$', empty_page, {'template':'home_page.html'}),
     url(r'^my_todo_list/$', todo_list, {'template':'to_do_list_page.html'}),
-    url(r'^redact/(\d+)/$', edit_text, {'template':'redact_page.html'}),
+    url(r'^my_todo_list/edit/(?P<id>\d+)/$', edit_text, {'template':'redact_page.html'}),
 
     url(r'^registration_ty/$', empty_page, {'template':'congratulate.html'}),
     url(r'^registration/$', registration, {'template':'registration_page.html'}),
