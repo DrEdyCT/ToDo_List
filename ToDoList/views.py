@@ -8,10 +8,12 @@ from forms import *
 from users_data.models import *
 from django.contrib.auth.models import User
 import datetime
+from django.template import RequestContext
 
 def empty_page(request, *args, **kwargs):
     kwargs.update(login_status(request))
     return render(request, kwargs['template'], locals())
+
 
 def registration(request, *args, **kwargs):
     kwargs.update(login_status(request))
@@ -27,7 +29,9 @@ def registration(request, *args, **kwargs):
                 return render(request, kwargs['template'], locals())
             new_user = User.objects.create_user(username, email, pass1)
             new_user.save()
-            return HttpResponseRedirect('/registration_ty/')
+            user = authenticate(username = username, password = pass1)
+            login(request, user)
+            return redirect('/registration_ty')
     else:
         form = RegistrationForm()
     return render(request, kwargs['template'], locals())
